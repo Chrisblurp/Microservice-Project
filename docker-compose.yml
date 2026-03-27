@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:3000"
+    depends_on:
+      - api-service
+
+  api-service:
+    build: ./api-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+      - postgres
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "4000:4000"
+
+  worker-service:
+    build: ./worker-service
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: devopsdb
+    ports:
+      - "5432:5432"
