@@ -37,15 +37,4 @@ jobs:
           docker build -t jhon027/worker-service:latest ./worker-service
           docker push jhon027/worker-service:latest
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Deploy to Kubernetes
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        run: |
-          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
-          export KUBECONFIG=kubeconfig
-          kubectl apply -f k8s/
+      
