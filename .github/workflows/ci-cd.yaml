@@ -24,18 +24,18 @@ jobs:
 
       - name: Build & Push Frontend Image
         run: |
-          docker build -t frontend:latest ./frontend
-          docker push frontend:latest
+          docker build -t jhon027/frontend:latest ./frontend
+          docker push jhon027/frontend:latest
 
       - name: Build & Push Auth Service Image
         run: |
-          docker build -t auth-service:latest ./auth-service
-          docker push auth-service:latest
+          docker build -t jhon027/auth-service:latest ./auth-service
+          docker push jhon027/auth-service:latest
 
       - name: Build & Push Worker Image
         run: |
-          docker build -t worker-service:latest ./worker-service
-          docker push worker-service:latest
+          docker build -t jhon027/worker-service:latest ./worker-service
+          docker push jhon027/worker-service:latest
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
