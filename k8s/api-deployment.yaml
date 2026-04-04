@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: api-service
-        image: microservice-project-api-service:latest
+        image: khrisblurp/microservice-project-api-service:latest
         ports:
         - containerPort: 3000
         env:

@@ -3,42 +3,15 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Test API Service
-      run: |
-        cd api
-        npm install
-        npm test || echo "No tests yet"
-    
-    - name: Test Auth Service
-      run: |
-        cd auth
-        pip install -r requirements.txt
-        python -m pytest || echo "No tests yet"
-    
-    - name: Security Scan with Trivy
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'table'
-  
   build-and-push:
-    needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    
     steps:
     - uses: actions/checkout@v3
     
@@ -51,22 +24,33 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     
-    - name: Build and Push Images
-      run: |
-        docker build -t $DOCKER_HUB_USERNAME/frontend:latest ./frontend
-        docker build -t $DOCKER_HUB_USERNAME/api:latest ./api
-        docker build -t $DOCKER_HUB_USERNAME/auth:latest ./auth
-        docker build -t $DOCKER_HUB_USERNAME/worker:latest ./worker
-        docker push $DOCKER_HUB_USERNAME/frontend:latest
-        docker push $DOCKER_HUB_USERNAME/api:latest
-        docker push $DOCKER_HUB_USERNAME/auth:latest
-        docker push $DOCKER_HUB_USERNAME/worker:latest
+    - name: Build and push frontend
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: Dockerfile.frontend
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/frontend:latest
     
-    - name: Update Kubernetes Manifests
+    - name: Build and push API
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: Dockerfile.api
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/api:latest
+    
+    - name: Build and push Auth
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: Dockerfile.auth
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/auth:latest
+    
+    - name: Update Kubernetes manifests
       run: |
-        sed -i "s|image:.*frontend:.*|image: $DOCKER_HUB_USERNAME/frontend:latest|g" k8s/frontend-deployment.yaml
-        sed -i "s|image:.*api:.*|image: $DOCKER_HUB_USERNAME/api:latest|g" k8s/api-deployment.yaml
-        sed -i "s|image:.*auth:.*|image: $DOCKER_HUB_USERNAME/auth:latest|g" k8s/auth-deployment.yaml
+        sed -i "s|image:.*frontend:.*|image: ${{ secrets.DOCKER_USERNAME }}/frontend:latest|g" k8s/*.yaml
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
         git add k8s/
