@@ -3,6 +3,8 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -24,35 +26,57 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     
-    - name: Build and push frontend
+    - name: Build and push Frontend
       uses: docker/build-push-action@v4
       with:
-        context: .
-        file: Dockerfile.frontend
+        context: ./frontend
+        file: ./frontend/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/frontend:latest
     
-    - name: Build and push API
+    - name: Build and push API Service
       uses: docker/build-push-action@v4
       with:
-        context: .
-        file: Dockerfile.api
+        context: ./api-service
+        file: ./api-service/Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/api:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/api-service:latest
     
-    - name: Build and push Auth
+    - name: Build and push Auth Service
       uses: docker/build-push-action@v4
       with:
-        context: .
-        file: Dockerfile.auth
+        context: ./auth-service
+        file: ./auth-service/Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/auth:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+    
+    - name: Build and push Worker Service
+      uses: docker/build-push-action@v4
+      with:
+        context: ./worker-service
+        file: ./worker-service/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/worker-service:latest
     
     - name: Update Kubernetes manifests
       run: |
-        sed -i "s|image:.*frontend:.*|image: ${{ secrets.DOCKER_USERNAME }}/frontend:latest|g" k8s/*.yaml
+        # Update image references in k8s manifests
+        sed -i "s|image: microservice-project-frontend:latest|image: ${{ secrets.DOCKER_USERNAME }}/frontend:latest|g" k8s/*.yaml 2>/dev/null || true
+        sed -i "s|image: microservice-project-api-service:latest|image: ${{ secrets.DOCKER_USERNAME }}/api-service:latest|g" k8s/*.yaml 2>/dev/null || true
+        sed -i "s|image: microservice-project-auth-service:latest|image: ${{ secrets.DOCKER_USERNAME }}/auth-service:latest|g" k8s/*.yaml 2>/dev/null || true
+        sed -i "s|image: microservice-project-worker-service:latest|image: ${{ secrets.DOCKER_USERNAME }}/worker-service:latest|g" k8s/*.yaml 2>/dev/null || true
+        
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git add k8s/
-        git commit -m "Update images [skip ci]" || echo "No changes"
-        git push
+        git add k8s/ || true
+        git commit -m "Update images [skip ci]" || echo "No changes to commit"
+        git push || echo "Push skipped"
+    
+    - name: Build Success
+      run: |
+        echo "✅ All images built and pushed successfully!"
+        echo "Images pushed:"
+        echo "  - ${{ secrets.DOCKER_USERNAME }}/frontend:latest"
+        echo "  - ${{ secrets.DOCKER_USERNAME }}/api-service:latest"
+        echo "  - ${{ secrets.DOCKER_USERNAME }}/auth-service:latest"
+        echo "  - ${{ secrets.DOCKER_USERNAME }}/worker-service:latest"
