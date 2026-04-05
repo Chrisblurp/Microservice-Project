@@ -1,0 +1,61 @@
+loki:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 10Gi
+  config:
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 168h
+
+promtail:
+  enabled: true
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+    snippets:
+      scrapeConfigs: |
+        - job_name: kubernetes-pods
+          kubernetes_sd_configs:
+            - role: pod
+          pipeline_stages:
+            - docker: {}
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              target_label: app
+            - source_labels: [__meta_kubernetes_pod_namespace]
+              target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              target_label: node
+
+grafana:
+  enabled: true
+  adminPassword: admin
+  sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki:3100
+      access: proxy
+  
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: default
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+  
+  dashboards:
+    default:
+      loki-logs:
+        url: https://raw.githubusercontent.com/grafana/loki/master/production/grafana/dashboards/logs.json
+        datasource: Loki
