@@ -1,10 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
+const client = require('prom-client');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+// collect default metrics (CPU, memory, event loop, etc.)
+client.collectDefaultMetrics();
 
 const PORT = process.env.PORT || 3000;
 
@@ -15,6 +18,12 @@ const pool = new Pool({
   password: "password",
   database: "devopsdb",
   port: 5432,
+});
+
+// create /metrics endpoint
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
 });
 
 app.get("/", (req, res) => {
