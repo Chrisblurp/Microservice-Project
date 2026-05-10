@@ -1,0 +1,8 @@
+metadata:
+  name: api-service
+spec:
+  selector:
+    app: api-service
+  ports:
+    - port: 3000
+      targetPort: 3000

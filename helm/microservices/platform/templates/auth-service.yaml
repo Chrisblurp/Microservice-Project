@@ -1,0 +1,8 @@
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - port: 4000
+      targetPort: 4000

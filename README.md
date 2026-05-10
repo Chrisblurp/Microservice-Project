@@ -1,125 +1,502 @@
-PROJECT OVERVIEW
-This project is a Complete Microservices DevOps Platform designed to teach students how modern applications are built, containerized, deployed, and managed using DevOps tools and practices.
-By completing this project, students will learn:
-- Microservices architecture
+# Enterprise Microservices DevOps Platform on Azure Kubernetes Service (AKS)
+
+A complete cloud-native microservices platform demonstrating modern DevOps practices including containerization, Kubernetes orchestration, CI/CD automation, GitOps deployment, Infrastructure as Code, monitoring, centralized logging, and DevSecOps security scanning.
+
+This project simulates a real-world production DevOps environment using enterprise-grade tools and workflows.
+
+---
+
+# Project Highlights
+
+- Microservices-based application architecture
 - Docker containerization
-- Docker Compose orchestration
+- Docker Compose local orchestration
 - Kubernetes deployments
-- CI/CD pipelines
-- GitOps deployment
-- Infrastructure as Code
-- Monitoring and Observability
-- DevSecOps security scanning
-This project simulates a real production DevOps environment.
+- Azure Kubernetes Service (AKS)
+- CI/CD automation using GitHub Actions
+- GitOps deployment with ArgoCD
+- Infrastructure as Code using Terraform
+- Monitoring with Prometheus and Grafana
+- Centralized logging with Loki and Promtail
+- NGINX Ingress Controller and HTTPS support
+- DevSecOps image scanning
+- Helm chart packaging
+- Load testing implementation
 
-Part 1 — Clone the Repository
-Students should start by cloning the project:
-git clone https://github.com/YOUR_USERNAME/microservices-devops-platform.git
+---
+
+# Architecture Overview
+
+## Platform Workflow
+
+```text
+Developer Pushes Code
+        ↓
+GitHub Actions CI/CD Pipeline
+        ↓
+Build Docker Images
+        ↓
+Security & Vulnerability Scanning
+        ↓
+Push Images to DockerHub
+        ↓
+ArgoCD GitOps Synchronization
+        ↓
+Deploy to Azure Kubernetes Service (AKS)
+        ↓
+NGINX Ingress Routing
+        ↓
+Prometheus Metrics Collection
+        ↓
+Grafana Visualization & Monitoring
+        ↓
+Loki Centralized Logging
+```
+
+---
+
+# Microservices Architecture
+
+The platform consists of multiple independent services:
+
+| Service | Description |
+|---|---|
+| Frontend Service | User interface application |
+| API Service | Backend API handling requests |
+| Authentication Service | User authentication & authorization |
+| Monitoring Stack | Prometheus & Grafana |
+| Logging Stack | Loki & Promtail |
+| GitOps Controller | ArgoCD |
+
+---
+
+# Tech Stack
+
+## Cloud & Infrastructure
+
+- Microsoft Azure
+- Azure Kubernetes Service (AKS)
+- Terraform
+- Kubernetes
+- Helm
+
+## DevOps & CI/CD
+
+- Docker
+- Docker Compose
+- GitHub Actions
+- ArgoCD
+- GitOps Workflow
+
+## Monitoring & Observability
+
+- Prometheus
+- Grafana
+- Loki
+- Promtail
+
+## Networking & Security
+
+- NGINX Ingress Controller
+- TLS / HTTPS
+- Container Security Scanning
+
+## Development
+
+- Node.js
+- JavaScript
+- YAML
+- Bash
+
+---
+
+# Project Structure
+
+```bash
+.
+├── frontend/
+├── api/
+├── auth-service/
+├── docker-compose.yml
+├── k8s/
+├── helm/
+├── terraform/
+├── monitoring/
+├── logging/
+├── ingress/
+├── .github/
+│   └── workflows/
+├── scripts/
+├── screenshots/
+└── README.md
+```
+
+---
+
+# Features
+
+- Scalable microservices architecture
+- Containerized application services
+- Kubernetes orchestration
+- GitOps continuous deployment
+- Infrastructure as Code provisioning
+- Automated CI/CD pipelines
+- Centralized logging
+- Real-time monitoring
+- Security scanning
+- HTTPS ingress configuration
+- Helm-based deployments
+- Cloud-native infrastructure
+
+---
+
+# Local Development Setup
+
+## Prerequisites
+
+Install the following tools:
+
+- Git
+- Docker
+- Docker Compose
+- kubectl
+- Minikube or Docker Desktop
+- Helm
+- Terraform
+- Azure CLI
+
+---
+
+# Clone Repository
+
+```bash
+git clone https://github.com/Chrisblurp/Microservice-Project.git
+
 cd microservices-devops-platform
+```
 
+---
 
-Part 2 — Run the Application with Docker Compose
-Build and start all services:
+# Run with Docker Compose
+
+## Build & Start Services
+
+```bash
 docker compose up --build
-Verify containers:
+```
+
+## Verify Running Containers
+
+```bash
 docker ps
+```
 
-Test application:
-Frontend → http://localhost:8080
-API → http://localhost:3000
-Auth → http://localhost:4000
-Prometheus → http://localhost:9090
-Grafana → http://localhost:3001
+---
 
-Stop containers:
+# Access Services Locally
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:8080 |
+| API | http://localhost:3000 |
+| Auth Service | http://localhost:4000 |
+| Prometheus | http://localhost:9090 |
+| Grafana | http://localhost:3001 |
+
+---
+
+# Stop Containers
+
+```bash
 docker compose down
+```
 
+---
 
-Part 3 — Kubernetes Deployment
-Start Kubernetes cluster (Minikube or Docker Desktop).
+# Kubernetes Deployment
 
-Apply manifests:
+## Start Kubernetes Cluster
+
+```bash
+minikube start
+```
+
+OR connect to Azure Kubernetes Service (AKS).
+
+---
+
+# Deploy Kubernetes Manifests
+
+```bash
 kubectl apply -f k8s/
+```
 
-Verify deployment:
+---
+
+# Verify Kubernetes Resources
+
+```bash
 kubectl get pods
 kubectl get svc
 kubectl get deployments
+```
 
-Port forward frontend:
+---
+
+# Port Forward Frontend
+
+```bash
 kubectl port-forward svc/frontend 8080:80
+```
 
-Open browser:
+Open in browser:
+
+```text
 http://localhost:8080
+```
 
+---
 
-Part 4 — CI/CD Pipeline
-The project includes a CI/CD pipeline that:
-Builds Docker images
-Runs tests
-Performs security scanning
-Pushes images to DockerHub
-Deploys to Kubernetes using GitOps
+# Azure Kubernetes Service (AKS)
 
-Students should push code to GitHub:
-git add .
-git commit -m "Project update"
-git push origin main
-Then check GitHub Actions to see the pipeline running.
+The project infrastructure was deployed using Microsoft Azure and Azure Kubernetes Service (AKS).
 
+---
 
-Part 5 — GitOps Deployment (ArgoCD)
-Install ArgoCD:
+# Connect to AKS Cluster
+
+```bash
+az aks get-credentials \
+  --resource-group <RESOURCE_GROUP> \
+  --name <AKS_CLUSTER_NAME>
+```
+
+---
+
+# Verify Cluster Nodes
+
+```bash
+kubectl get nodes
+```
+
+---
+
+# CI/CD Pipeline
+
+The platform includes a complete GitHub Actions CI/CD pipeline that automates:
+
+- Docker image builds
+- Automated testing
+- Security vulnerability scanning
+- Container image publishing
+- Kubernetes deployment
+- GitOps synchronization
+
+---
+
+# GitHub Actions Workflow
+
+Pipeline triggers on:
+
+- Push to main branch
+- Pull requests
+
+---
+
+# GitOps Deployment with ArgoCD
+
+ArgoCD is used for GitOps-based Kubernetes deployment automation.
+
+---
+
+# Install ArgoCD
+
+```bash
 kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-Port forward ArgoCD:
+kubectl apply -n argocd \
+-f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+---
+
+# Port Forward ArgoCD UI
+
+```bash
 kubectl port-forward svc/argocd-server -n argocd 8081:443
+```
 
-Get admin password:
-kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+---
 
-Login to ArgoCD UI and connect the GitHub repository.
-ArgoCD will automatically deploy the Kubernetes manifests.
+# Get ArgoCD Admin Password
 
+```bash
+kubectl get secret argocd-initial-admin-secret \
+-n argocd \
+-o jsonpath="{.data.password}" | base64 -d
+```
 
-Part 6 — Monitoring (Prometheus & Grafana)
-Monitoring is included using Prometheus and Grafana.
-Access:
-Tool	URL
-Prometheus	http://localhost:9090
-Grafana	http://localhost:3001
-Grafana login:
+---
+
+# Monitoring & Observability
+
+Monitoring stack includes:
+
+- Prometheus
+- Grafana
+- Kubernetes metrics dashboards
+
+---
+
+# Monitoring URLs
+
+| Tool | URL |
+|---|---|
+| Prometheus | http://localhost:9090 |
+| Grafana | http://localhost:3001 |
+
+---
+
+# Grafana Login
+
+```text
 Username: admin
-Password: admin
-Add Prometheus as a data source and create dashboards.
+Password: "get password"
+```
 
+---
 
-Part 7 — Terraform Infrastructure
-Terraform is used to provision cloud infrastructure such as Kubernetes clusters.
-Initialize Terraform:
+# Centralized Logging
+
+The project implements centralized logging using:
+
+- Loki
+- Promtail
+- Grafana Logs
+
+This enables centralized collection and visualization of Kubernetes application logs.
+
+---
+
+# Infrastructure as Code
+
+Terraform is used to provision and manage Azure cloud infrastructure.
+
+---
+
+# Terraform Workflow
+
+## Initialize Terraform
+
+```bash
 cd terraform
+
 terraform init
+```
+
+## Plan Infrastructure
+
+```bash
 terraform plan
+```
+
+## Apply Infrastructure
+
+```bash
 terraform apply
-This creates infrastructure for deploying the platform in the cloud.
-Testing Checklist (VERY IMPORTANT)
+```
+
+---
+
+# Helm Deployment
+
+Kubernetes manifests were packaged and managed using Helm charts.
+
+---
+
+# Deploy Helm Chart
+
+```bash
+helm install microservices-platform ./helm
+```
+
+---
+
+# DevSecOps Security Scanning
+
+The CI/CD pipeline includes security scanning for:
+
+- Container vulnerabilities
+- Dependency vulnerabilities
+- Kubernetes configuration checks
+
+---
+
+# Load Testing
+
+Load testing was performed using:
+
+- k6
+- Apache JMeter
+
+to simulate production traffic and test scalability.
+
+---
+
+# HTTPS & Ingress
+
+The platform uses:
+
+- NGINX Ingress Controller
+- TLS certificates
+- HTTPS routing
+
+for secure external access to services.
+
+---
+
+# BashScript Testing
+
+i also created a bash script to test the services and also automaticaly foward all ports
+./
+start-port-forwards.sh
+test-services.sh
 
 
-Bonus Work (Advanced Students)
-Bonus 1 — Centralized Logging
-Add logging stack:
-Loki
-Promtail
-Grafana Logs
+# Skills Demonstrated
 
-Bonus 2 — Helm Charts
-Package Kubernetes manifests using Helm.
+- Azure Cloud Infrastructure
+- Azure Kubernetes Service (AKS)
+- Kubernetes administration
+- Docker containerization
+- CI/CD automation
+- GitOps workflows
+- Infrastructure as Code
+- Helm package management
+- Monitoring & observability
+- Centralized logging
+- DevSecOps security scanning
+- Microservices architecture
+- NGINX ingress configuration
+- Cloud-native deployments
+- Bash scripting
 
-Bonus 3 — Load Testing
-Use:
-k6
-Apache JMeter
+---
 
-Bonus 4 — SSL / HTTPS
-Add Ingress Controller and TLS certificates.
+
+Through this project, I gained practical experience with:
+
+- Designing microservices architectures
+- Deploying scalable Kubernetes workloads
+- Implementing GitOps workflows
+- Automating CI/CD pipelines
+- Managing Azure cloud infrastructure
+- Monitoring and logging distributed systems
+- Implementing DevSecOps best practices
+- Managing production-style cloud-native environments
+
+---
+
+
+
+---

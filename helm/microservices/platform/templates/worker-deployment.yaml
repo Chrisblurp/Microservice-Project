@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: worker-service
+  template:
+    metadata:
+      labels:
+        app: worker-service
+    spec:
+      containers:
+        - name: worker-service
+          image: khrisblurp/microservice-project-worker-service:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_USER
+              value: admin
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_NAME
+              value: devopsdb
